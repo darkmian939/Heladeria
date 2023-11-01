@@ -15,11 +15,11 @@ namespace Heladeria.Data
 
         }
 
-        public DbSet<Proovedor> proovedors { get; set; }
-        public DbSet<Cliente> clientes { get; set; }
-        public DbSet<OrdenCompra> ordenCompras { get; set; }
-        public DbSet<OrdenarItems> OrdenarItems { get; set; }
-        public DbSet<Producto> productos { get; set; }
+        public DbSet<Suppliers> Suppliers { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItems> OrderItems { get; set; }
+        public DbSet<Product> Products { get; set; }
 
 
     }
