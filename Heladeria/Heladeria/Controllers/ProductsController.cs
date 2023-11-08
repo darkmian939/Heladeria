@@ -8,13 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Heladeria.Data;
 using Heladeria.Models;
 
-namespace ApiRestBilling.Controllers
+namespace Heladeria.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+
+        public int Id { get; private set; }
 
         public ProductsController(ApplicationDbContext context)
         {
@@ -23,7 +25,7 @@ namespace ApiRestBilling.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Products>>> GetProducts()
         {
             if (_context.Products == null)
             {
@@ -34,13 +36,13 @@ namespace ApiRestBilling.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductsController>> GetProduct(int id, ActionResult<ProductsController> product)
         {
             if (_context.Products == null)
             {
                 return NotFound();
             }
-            var product = await _context.Products.FindAsync(id);
+            var products = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
@@ -53,7 +55,7 @@ namespace ApiRestBilling.Controllers
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, ProductsController product)
         {
             if (id != product.Id)
             {
@@ -84,7 +86,7 @@ namespace ApiRestBilling.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Products>> PostProduct([FromBody]Products product)
         {
             if (_context.Products == null)
             {
@@ -95,6 +97,7 @@ namespace ApiRestBilling.Controllers
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
+
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]

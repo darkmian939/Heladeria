@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Heladeria.Models
 {
-    public class Product
+    public class Products
     {
         [Key]
         public int Id { get; set; }
@@ -12,12 +12,12 @@ namespace Heladeria.Models
         public string ProductName { get; set; }
         [Required]
         public int SupplierId { get; set; }
-        public Decimal UnitPrice { get; set; } = 0;
+        public decimal UnitPrice { get; set; } = 0;
         [MaxLength(64)]
         public string Package { get; set; }
         public bool IsDiscontinued { get; set; } = false;
         [ForeignKey("SupplierId")]
-        public Suppliers Supplier { set; get; }
-        public ICollection<OrderItems> OrderItems { get; set; }
+        public Suppliers? Supplier { get; set; }
+        public ICollection<OrderItems>? OrderItems { get; set; }
     }
 }

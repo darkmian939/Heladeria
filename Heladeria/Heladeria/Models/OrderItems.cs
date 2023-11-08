@@ -19,9 +19,10 @@ namespace Heladeria.Models
         public int Quantity { get; set; } = 1;
         [ForeignKey("OrderId")]
 
-        public Order OrdenCompra { get; set; }
+        public Orders? OrdenCompra { get; set; }
         [ForeignKey("ProductId")]
-        public Product Product { get; set; }
 
+        public Products? Product { get; set; }
+        public decimal Subtotal { get; internal set; }
     }
 }

@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Heladeria.Data;
+using Heladeria.Services;
 using Heladeria.Models;
 
-namespace ApiRestBilling.Controllers
+namespace Heladeria.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPurchaseOrdersService _purchaseOrdersService;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IPurchaseOrdersService purchaseOrdersService)
         {
             _context = context;
+            _purchaseOrdersService = purchaseOrdersService;
         }
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<Orders>>> GetOrders()
         {
             if (_context.Orders == null)
             {
@@ -34,15 +32,15 @@ namespace ApiRestBilling.Controllers
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        public async Task<ActionResult<Orders>> GetOrder(int id)
         {
             if (_context.Orders == null)
             {
                 return NotFound();
             }
-            // var order = await _context.Orders.Include(oi => oi.OrderItems).FindAsync(id);
+          
             var order = await _context.Orders.Include(oi => oi.OrderItems)
-                                     .FirstOrDefaultAsync(o => o.Id == id); // Asumiendo que el nombre del campo es 'Id'.
+                                     .FirstOrDefaultAsync(o => o.Id == id); 
 
             if (order == null)
             {
@@ -53,9 +51,8 @@ namespace ApiRestBilling.Controllers
         }
 
         // PUT: api/Orders/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        public async Task<IActionResult> PutOrder(int id, Orders order)
         {
             if (id != order.Id)
             {
@@ -84,14 +81,27 @@ namespace ApiRestBilling.Controllers
         }
 
         // POST: api/Orders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult<Orders>> PostOrder(Orders order)
         {
             if (_context.Orders == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Orders'  is null.");
             }
+
+            // Recorremos cada detalle en la orden de compra
+            foreach (var detalle in order.OrderItems)
+            {
+                // Asignar el precio unitario del producto al detalle
+                detalle.UnitPrice = await _purchaseOrdersService.CheckUnitPrice(detalle);
+
+                // Calcular el subtotal
+                detalle.Subtotal = await _purchaseOrdersService.CalculateSubtotalOrderItem(detalle);
+            }
+
+            // Asignar el total calculado a la orden de compra (si tienes una propiedad explicita para el total en tu modelo)
+            order.TotalAmount = _purchaseOrdersService.CalcularTotalOrderItems((List<OrderItems>)order.OrderItems);
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 

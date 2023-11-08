@@ -22,7 +22,7 @@ namespace Heladeria.Models
         [EmailAddress(ErrorMessage = "El valor introducido no es una dirección de correo electrónico válida.")]
         public string? Email { get; set; }
 
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Products>? Product { get; set; }
 
 
     }
