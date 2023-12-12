@@ -24,7 +24,7 @@ namespace Heladeria.Models
         [MaxLength(16)]
         public string Phone { get; set; }
 
-    public ICollection<Order>? Orders { get; set; }
+    public ICollection<Orders>? Orders { get; set; }
 
 }
 
