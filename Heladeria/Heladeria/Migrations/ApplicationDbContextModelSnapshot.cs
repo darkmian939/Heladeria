@@ -60,34 +60,6 @@ namespace Heladeria.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("OrderNumber")
-                        .HasMaxLength(128)
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("Orders");
-                });
-
             modelBuilder.Entity("Heladeria.Models.OrderItems", b =>
                 {
                     b.Property<int>("Id")
@@ -105,6 +77,9 @@ namespace Heladeria.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -117,7 +92,34 @@ namespace Heladeria.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Product", b =>
+            modelBuilder.Entity("Heladeria.Models.Orders", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrderNumber")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Heladeria.Models.Products", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,26 +199,15 @@ namespace Heladeria.Migrations
                     b.ToTable("Suppliers");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Order", b =>
-                {
-                    b.HasOne("Heladeria.Models.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("Heladeria.Models.OrderItems", b =>
                 {
-                    b.HasOne("Heladeria.Models.Order", "OrdenCompra")
+                    b.HasOne("Heladeria.Models.Orders", "OrdenCompra")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Heladeria.Models.Product", "Product")
+                    b.HasOne("Heladeria.Models.Products", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -227,10 +218,21 @@ namespace Heladeria.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Product", b =>
+            modelBuilder.Entity("Heladeria.Models.Orders", b =>
+                {
+                    b.HasOne("Heladeria.Models.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Heladeria.Models.Products", b =>
                 {
                     b.HasOne("Heladeria.Models.Suppliers", "Supplier")
-                        .WithMany("Products")
+                        .WithMany("Product")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -243,19 +245,19 @@ namespace Heladeria.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Order", b =>
+            modelBuilder.Entity("Heladeria.Models.Orders", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Heladeria.Models.Product", b =>
+            modelBuilder.Entity("Heladeria.Models.Products", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Heladeria.Models.Suppliers", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }
